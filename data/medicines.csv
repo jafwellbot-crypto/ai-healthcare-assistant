@@ -1,1 +1,7 @@
-
+medicine,used_for,avoid_for
+Paracetamol,fever,none
+Ibuprofen,pain,ulcer patients
+Domperidone,vomiting,pregnant women
+Ondansetron,vomiting,none
+Aspirin,headache,children
+Diclofenac,back pain,pregnant women
