@@ -4,14 +4,16 @@ from flask_cors import CORS
 from backend.symptom_engine import SymptomEngine
 from backend.medicine_filter import MedicineFilter
 from backend.doctor_locator import DoctorLocator
+from backend.triage_engine import TriageEngine
 
 app = Flask(__name__)
 CORS(app)
 
-# Initialize modules
+# Initialize engines
 symptom_engine = SymptomEngine()
 medicine_filter = MedicineFilter()
 doctor_locator = DoctorLocator()
+triage_engine = TriageEngine()
 
 
 # Home route
@@ -20,48 +22,65 @@ def home():
     return "AI Healthcare Assistant API Running"
 
 
-# Analyze symptom route
+# Analyze symptom
 @app.route("/analyze", methods=["POST"])
 def analyze():
 
     data = request.get_json()
 
-    # Safety check
-    if not data or "symptom" not in data:
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    symptom = data.get("symptom")
+
+    if not symptom:
         return jsonify({"error": "No symptom provided"}), 400
 
-    symptom = data["symptom"]
+    # Optional medical parameters
+    duration_days = data.get("duration_days", 1)
+    temperature = data.get("temperature", 98)
+    pain_level = data.get("pain_level", 3)
+    vomiting_count = data.get("vomiting_count", 0)
+    age = data.get("age", 30)
 
-    results = symptom_engine.analyze_symptom(symptom)
+    # Calculate triage score
+    score = triage_engine.calculate_score(
+        symptom,
+        duration_days,
+        temperature,
+        pain_level,
+        vomiting_count,
+        age
+    )
 
-    # If symptom not found
-    if not results:
-        return jsonify({
-            "message": "Sorry, we are currently not working on this symptom yet."
-        })
+    severity = triage_engine.classify_severity(score)
 
-    response = []
+    # Determine recommendation
+    recommendation = {}
 
-    for result in results:
+    if severity == "low":
 
-        entry = {
-            "condition": result["condition"],
-            "severity": result["severity"]
-        }
+        recommendation["advice"] = "Mild condition. Rest and monitor symptoms."
+        recommendation["medicines"] = medicine_filter.recommend_medicine(symptom)
 
-        # For mild/medium → suggest medicines
-        if result["severity"] in ["low", "medium"]:
-            entry["medicines"] = medicine_filter.recommend_medicine(symptom)
+    elif severity == "medium":
 
-        # For high → suggest doctors
-        if result["severity"] == "high":
-            entry["doctors"] = doctor_locator.get_doctors()
+        recommendation["advice"] = "Moderate condition. Medicines recommended."
+        recommendation["medicines"] = medicine_filter.recommend_medicine(symptom)
 
-        response.append(entry)
+    else:
 
-    return jsonify(response)
+        recommendation["advice"] = "Severe symptoms detected. Please consult a doctor."
+        recommendation["doctors"] = doctor_locator.get_doctors()
+
+    return jsonify({
+        "symptom": symptom,
+        "triage_score": score,
+        "severity": severity,
+        "recommendation": recommendation
+    })
 
 
-# Run server (IMPORTANT for Render)
+# Run server
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
