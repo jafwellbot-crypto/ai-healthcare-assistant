@@ -1,1 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Healthcare Assistant</title>
+<style>
 
+body{
+font-family: Arial;
+background:#f4f6f8;
+text-align:center;
+padding:40px;
+}
+
+.container{
+background:white;
+padding:30px;
+width:400px;
+margin:auto;
+border-radius:10px;
+box-shadow:0px 0px 10px rgba(0,0,0,0.1);
+}
+
+input{
+width:80%;
+padding:10px;
+margin-top:10px;
+}
+
+button{
+padding:10px 20px;
+margin-top:10px;
+background:#2a7cff;
+color:white;
+border:none;
+border-radius:5px;
+}
+
+#result{
+margin-top:20px;
+text-align:left;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>AI Healthcare Assistant</h2>
+
+<p>Enter your symptom</p>
+
+<input id="symptom" placeholder="example: fever">
+
+<br>
+
+<button onclick="analyze()">Analyze</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+async function analyze(){
+
+let symptom=document.getElementById("symptom").value;
+
+let response=await fetch("YOUR_RENDER_URL/analyze",{
+
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({symptom:symptom})
+
+});
+
+let data=await response.json();
+
+let resultDiv=document.getElementById("result");
+
+resultDiv.innerHTML="";
+
+data.forEach(entry=>{
+
+resultDiv.innerHTML+=
+"<h3>Condition: "+entry.condition+"</h3>"+
+"<p>Severity: "+entry.severity+"</p>";
+
+if(entry.medicines){
+
+entry.medicines.forEach(m=>{
+resultDiv.innerHTML+="<p>Medicine: "+m.medicine+"</p>";
+});
+
+}
+
+if(entry.doctors){
+
+resultDiv.innerHTML+="<p>Consult Doctors:</p>";
+
+entry.doctors.forEach(d=>{
+resultDiv.innerHTML+="<p>"+d.name+" - "+d.hospital+"</p>";
+});
+
+}
+
+});
+
+}
+
+</script>
+
+</body>
+
+</html>
