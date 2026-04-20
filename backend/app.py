@@ -84,3 +84,34 @@ def analyze():
 # Run server
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
+@app.route("/quick-test/<symptom>", methods=["GET"])
+def quick_test(symptom):
+
+    score = triage_engine.calculate_score(
+        symptom,
+        duration_days=2,
+        temperature=101,
+        pain_level=4,
+        vomiting_count=0,
+        age=25
+    )
+
+    severity = triage_engine.classify_severity(score)
+
+    if severity == "high":
+        doctors = doctor_locator.get_doctors()
+        return jsonify({
+            "symptom": symptom,
+            "severity": severity,
+            "triage_score": score,
+            "recommended_doctors": doctors
+        })
+
+    else:
+        meds = medicine_filter.recommend_medicine(symptom)
+        return jsonify({
+            "symptom": symptom,
+            "severity": severity,
+            "triage_score": score,
+            "recommended_medicines": meds
+        })
