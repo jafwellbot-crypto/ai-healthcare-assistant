@@ -26,5 +26,42 @@ def analyze():
 
     data = request.get_json()
 
+    # Safety check
     if not data or "symptom" not in data:
-        return jsonify({"error": "No
+        return jsonify({"error": "No symptom provided"}), 400
+
+    symptom = data["symptom"]
+
+    results = symptom_engine.analyze_symptom(symptom)
+
+    # If symptom not found
+    if not results:
+        return jsonify({
+            "message": "Sorry, we are currently not working on this symptom yet."
+        })
+
+    response = []
+
+    for result in results:
+
+        entry = {
+            "condition": result["condition"],
+            "severity": result["severity"]
+        }
+
+        # For mild/medium → suggest medicines
+        if result["severity"] in ["low", "medium"]:
+            entry["medicines"] = medicine_filter.recommend_medicine(symptom)
+
+        # For high → suggest doctors
+        if result["severity"] == "high":
+            entry["doctors"] = doctor_locator.get_doctors()
+
+        response.append(entry)
+
+    return jsonify(response)
+
+
+# Run server (IMPORTANT for Render)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
