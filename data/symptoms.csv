@@ -1,1 +1,11 @@
-
+symptom,possible_condition,severity
+fever,viral infection,medium
+fever,typhoid,high
+vomiting,food poisoning,medium
+vomiting,stomach infection,high
+neck pain,muscle strain,low
+neck pain,cervical spondylosis,medium
+back pain,poor posture,low
+back pain,spinal issue,high
+headache,migraine,medium
+headache,stress headache,low
