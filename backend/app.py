@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from database import get_patient_profile
 import pandas as pd
+
 
 app = Flask(__name__)
 CORS(app)
