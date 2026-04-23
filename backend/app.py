@@ -27,8 +27,7 @@ def home():
 def health():
     return jsonify({
         "status": "running",
-        "service": "AI Healthcare Assistant",
-        "version": "1.1"
+        "service": "AI Healthcare Assistant"
     })
 
 
@@ -36,25 +35,30 @@ def health():
 def analyze():
 
     try:
+
         data = request.json
 
+        # ---------------------
+        # USER INPUT
+        # ---------------------
+
+        patient_name = data.get("name", "")
         symptom = data.get("symptom", "").lower()
         temperature = data.get("temperature", 98)
         duration_days = data.get("duration_days", 1)
         pain_level = data.get("pain_level", 1)
         vomiting_count = data.get("vomiting_count", 0)
-        age = data.get("age", 25)
 
-        patient_name = data.get("name", "")
+        # ---------------------
+        # LOAD PATIENT PROFILE
+        # ---------------------
 
-        # -------------------------
-        # GET PATIENT PROFILE
-        # -------------------------
         patient_profile = get_patient_profile(patient_name)
 
-        # -------------------------
+        # ---------------------
         # TRIAGE SCORING
-        # -------------------------
+        # ---------------------
+
         triage_score = triage_engine.calculate_score(
             symptom,
             temperature,
@@ -65,17 +69,27 @@ def analyze():
 
         severity = triage_engine.get_severity(triage_score)
 
-        # -------------------------
-        # MEDICINE RECOMMENDATION
-        # -------------------------
-        medicines = medicine_filter.get_medicines(symptom)
+        # ---------------------
+        # MEDICINE FILTER
+        # ---------------------
 
-        # -------------------------
-        # DOCTOR SUGGESTION
-        # -------------------------
+        medicines = medicine_filter.get_medicines(
+            symptom,
+            patient_profile
+        )
+
+        # ---------------------
+        # DOCTOR RECOMMENDATION
+        # ---------------------
+
         doctors = []
+
         if severity == "high":
             doctors = doctor_locator.find_doctors(symptom)
+
+        # ---------------------
+        # RESPONSE
+        # ---------------------
 
         response = {
             "patient_profile": patient_profile,
@@ -90,6 +104,7 @@ def analyze():
         return jsonify(response)
 
     except Exception as e:
+
         return jsonify({
             "error": str(e)
         })
