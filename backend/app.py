@@ -1,106 +1,99 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from database import get_patient_profile
-import pandas as pd
 
+from symptom_engine import SymptomEngine
+from triage_engine import TriageEngine
+from medicine_filter import MedicineFilter
+from doctor_locator import DoctorLocator
+from database import get_patient_profile
 
 app = Flask(__name__)
 CORS(app)
 
-# Load medicine dataset
-try:
-    medicine_data = pd.read_csv("data/medicines.csv")
-except:
-    medicine_data = pd.DataFrame([
-        {"medicine": "Paracetamol", "used_for": "fever", "avoid_for": "none"},
-        {"medicine": "Cetirizine", "used_for": "allergy", "avoid_for": "none"},
-        {"medicine": "ORS", "used_for": "vomiting", "avoid_for": "none"},
-        {"medicine": "Ibuprofen", "used_for": "pain", "avoid_for": "pregnancy"}
-    ])
+symptom_engine = SymptomEngine()
+triage_engine = TriageEngine()
+medicine_filter = MedicineFilter()
+doctor_locator = DoctorLocator()
 
-# -----------------------------
-# ROOT ROUTE
-# -----------------------------
-@app.route("/", methods=["GET"])
+
+@app.route("/")
 def home():
     return jsonify({
         "message": "AI Healthcare Assistant API is running"
     })
 
-# -----------------------------
-# HEALTH CHECK ROUTE
-# -----------------------------
-@app.route("/health", methods=["GET"])
+
+@app.route("/health")
 def health():
     return jsonify({
         "status": "running",
         "service": "AI Healthcare Assistant",
-        "version": "1.0"
+        "version": "1.1"
     })
 
-# -----------------------------
-# TRIAGE SCORING FUNCTION
-# -----------------------------
-def calculate_triage_score(data):
 
-    score = 0
-
-    temperature = data.get("temperature", 98)
-    duration = data.get("duration_days", 0)
-    pain = data.get("pain_level", 0)
-    vomiting = data.get("vomiting_count", 0)
-
-    if temperature >= 101:
-        score += 20
-
-    if duration >= 3:
-        score += 20
-
-    if pain >= 5:
-        score += 20
-
-    if vomiting >= 3:
-        score += 20
-
-    return score
-
-# -----------------------------
-# ANALYZE SYMPTOMS
-# -----------------------------
 @app.route("/analyze", methods=["POST"])
 def analyze():
 
-    data = request.json
+    try:
+        data = request.json
 
-    symptom = data.get("symptom", "").lower()
+        symptom = data.get("symptom", "").lower()
+        temperature = data.get("temperature", 98)
+        duration_days = data.get("duration_days", 1)
+        pain_level = data.get("pain_level", 1)
+        vomiting_count = data.get("vomiting_count", 0)
+        age = data.get("age", 25)
 
-    triage_score = calculate_triage_score(data)
+        patient_name = data.get("name", "")
 
-    if triage_score >= 60:
-        severity = "high"
-        recommendation = "Consult a doctor immediately"
-        medicines = []
-    elif triage_score >= 30:
-        severity = "medium"
-        recommendation = "Medicine recommended"
-        medicines = medicine_data[medicine_data["used_for"] == symptom].to_dict(orient="records")
-    else:
-        severity = "low"
-        recommendation = "Rest and basic medication"
-        medicines = medicine_data[medicine_data["used_for"] == symptom].to_dict(orient="records")
+        # -------------------------
+        # GET PATIENT PROFILE
+        # -------------------------
+        patient_profile = get_patient_profile(patient_name)
 
-    response = {
-        "symptom": symptom,
-        "triage_score": triage_score,
-        "severity": severity,
-        "recommendation": recommendation,
-        "medicines": medicines
-    }
+        # -------------------------
+        # TRIAGE SCORING
+        # -------------------------
+        triage_score = triage_engine.calculate_score(
+            symptom,
+            temperature,
+            duration_days,
+            pain_level,
+            vomiting_count
+        )
 
-    return jsonify(response)
+        severity = triage_engine.get_severity(triage_score)
 
-# -----------------------------
-# RUN SERVER
-# -----------------------------
+        # -------------------------
+        # MEDICINE RECOMMENDATION
+        # -------------------------
+        medicines = medicine_filter.get_medicines(symptom)
+
+        # -------------------------
+        # DOCTOR SUGGESTION
+        # -------------------------
+        doctors = []
+        if severity == "high":
+            doctors = doctor_locator.find_doctors(symptom)
+
+        response = {
+            "patient_profile": patient_profile,
+            "symptom": symptom,
+            "triage_score": triage_score,
+            "severity": severity,
+            "recommendation": "Medicine recommended",
+            "medicines": medicines,
+            "recommended_doctors": doctors
+        }
+
+        return jsonify(response)
+
+    except Exception as e:
+        return jsonify({
+            "error": str(e)
+        })
+
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    app.run(debug=True)
