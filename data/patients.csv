@@ -1,0 +1,4 @@
+name,age,gender,blood_group,existing_diseases,allergies,alcoholic
+Rahul,28,male,O+,diabetes,penicillin,false
+Anita,34,female,A+,none,ibuprofen,false
+Karan,45,male,B+,hypertension,none,true
