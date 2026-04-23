@@ -1,22 +1,43 @@
-import csv
+import pandas as pd
+from database import load_medicines
+
 
 class MedicineFilter:
 
     def __init__(self):
-        self.medicine_data = []
-        self.load_data()
+        self.medicines = load_medicines()
 
-    def load_data(self):
-        with open("data/medicines.csv", "r") as file:
-            reader = csv.DictReader(file)
-            for row in reader:
-                self.medicine_data.append(row)
+    def get_medicines(self, symptom, patient_profile=None):
 
-    def recommend_medicine(self, symptom):
-        medicines = []
+        try:
+            filtered = self.medicines[
+                self.medicines["used_for"].str.lower() == symptom.lower()
+            ]
 
-        for entry in self.medicine_data:
-            if symptom.lower() in entry["used_for"].lower():
-                medicines.append(entry)
+            # ----------------------------
+            # ALLERGY FILTER
+            # ----------------------------
+            if patient_profile:
 
-        return medicines
+                allergies = str(patient_profile.get("allergies", "")).lower()
+
+                if allergies != "none":
+
+                    filtered = filtered[
+                        ~filtered["medicine"].str.lower().str.contains(allergies)
+                    ]
+
+            medicines_list = []
+
+            for _, row in filtered.iterrows():
+                medicines_list.append({
+                    "medicine": row["medicine"],
+                    "used_for": row["used_for"],
+                    "avoid_for": row["avoid_for"]
+                })
+
+            return medicines_list
+
+        except Exception as e:
+            print("Medicine filter error:", e)
+            return []
