@@ -1,5 +1,5 @@
 import pandas as pd
-from database import load_medicines
+from backend.database import load_medicines
 
 
 class MedicineFilter:
