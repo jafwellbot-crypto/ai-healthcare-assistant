@@ -10,13 +10,9 @@ class SymptomEngine:
 
     def load_data(self):
 
-        # Get project root directory
-        BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
-        # Path to CSV file
+        BASE_DIR = os.path.dirname(__file__)
         data_path = os.path.join(BASE_DIR, "data", "symptoms.csv")
 
-        # Load CSV
         with open(data_path, "r") as file:
             reader = csv.DictReader(file)
             for row in reader:
