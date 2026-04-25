@@ -1,11 +1,9 @@
 <!DOCTYPE html>
-
 <html>
 <head>
 <title>AI Healthcare Assistant</title>
 
 <style>
-
 body{
 font-family: Arial;
 background:#f4f6f8;
@@ -56,6 +54,15 @@ font-weight:bold;
 margin-bottom:10px;
 }
 
+.pill{
+display:inline-block;
+background:#d1ecf1;
+color:#0c5460;
+padding:5px 10px;
+margin:4px;
+border-radius:20px;
+font-size:13px;
+}
 </style>
 
 </head>
@@ -69,15 +76,10 @@ margin-bottom:10px;
 <p>Enter Patient Details</p>
 
 <input id="name" placeholder="Patient Name">
-
 <input id="symptom" placeholder="Symptom (example: fever)">
-
 <input id="temperature" type="number" placeholder="Temperature">
-
 <input id="duration" type="number" placeholder="Duration (days)">
-
 <input id="pain" type="number" placeholder="Pain Level (0-10)">
-
 <input id="vomit" type="number" placeholder="Vomiting Count">
 
 <br>
@@ -99,6 +101,11 @@ let duration=document.getElementById("duration").value;
 let pain=document.getElementById("pain").value;
 let vomit=document.getElementById("vomit").value;
 
+let resultDiv=document.getElementById("result");
+resultDiv.innerHTML="Loading... ⏳";
+
+try {
+
 let response=await fetch(
 "https://ai-healthcare-assistant-1-nhc1.onrender.com/analyze",
 {
@@ -106,7 +113,6 @@ method:"POST",
 headers:{
 "Content-Type":"application/json"
 },
-
 body:JSON.stringify({
 name:name,
 symptom:symptom,
@@ -121,35 +127,39 @@ let data=await response.json();
 
 console.log("FULL API RESPONSE:", data);
 
-let resultDiv=document.getElementById("result");
-
 resultDiv.innerHTML="";
 
+// Emergency
 if(data.severity==="emergency"){
-resultDiv.innerHTML+="<div class='emergency'>⚠ EMERGENCY CASE – SEEK MEDICAL HELP IMMEDIATELY</div>";
+resultDiv.innerHTML+=
+"<div class='emergency'>⚠ EMERGENCY CASE – SEEK MEDICAL HELP IMMEDIATELY</div>";
 }
 
-resultDiv.innerHTML+="<h3>Severity: "+data.severity+"</h3>";
-resultDiv.innerHTML+="<p>Triage Score: "+data.triage_score+"</p>";
+// Severity + Score
+resultDiv.innerHTML+=`
+<h3>Severity: ${data.severity}</h3>
+<p><b>Triage Score:</b> ${data.triage_score}</p>
+`;
 
-if(data.medicines){
-
+// Medicines (FIXED)
+if(data.medicines && data.medicines.length > 0){
 resultDiv.innerHTML+="<h3>Recommended Medicines</h3>";
-
 data.medicines.forEach(m=>{
-resultDiv.innerHTML+="<p>"+JSON.stringify(m)+"</p>";
+resultDiv.innerHTML+=`<span class="pill">💊 ${m}</span>`;
 });
-
 }
 
-if(data.doctors){
-
+// Doctors (FIXED KEY)
+if(data.recommended_doctors && data.recommended_doctors.length > 0){
 resultDiv.innerHTML+="<h3>Doctor Suggestions</h3>";
-
-data.doctors.forEach(d=>{
-resultDiv.innerHTML+="<p>"+JSON.stringify(d)+"</p>";
+data.recommended_doctors.forEach(d=>{
+resultDiv.innerHTML+=`<p>🧑‍⚕️ ${d.name || JSON.stringify(d)}</p>`;
 });
+}
 
+} catch(error){
+console.error(error);
+resultDiv.innerHTML="<p style='color:red'>Backend error or server not reachable</p>";
 }
 
 }
