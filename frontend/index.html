@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>AI Healthcare Assistant</title>
+
 <style>
 
 body{
@@ -28,16 +29,30 @@ margin-top:10px;
 
 button{
 padding:10px 20px;
-margin-top:10px;
+margin-top:15px;
 background:#2a7cff;
 color:white;
 border:none;
 border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1c5ed6;
 }
 
 #result{
 margin-top:20px;
 text-align:left;
+}
+
+.emergency{
+background:red;
+color:white;
+padding:10px;
+border-radius:5px;
+font-weight:bold;
+margin-bottom:10px;
 }
 
 </style>
@@ -49,9 +64,19 @@ text-align:left;
 
 <h2>AI Healthcare Assistant</h2>
 
-<p>Enter your symptom</p>
+<p>Enter Patient Details</p>
 
-<input id="symptom" placeholder="example: fever">
+<input id="name" placeholder="Patient Name">
+
+<input id="symptom" placeholder="Symptom (example: fever)">
+
+<input id="temperature" type="number" placeholder="Temperature">
+
+<input id="duration" type="number" placeholder="Duration (days)">
+
+<input id="pain" type="number" placeholder="Pain Level (0-10)">
+
+<input id="vomit" type="number" placeholder="Vomiting Count">
 
 <br>
 
@@ -65,17 +90,29 @@ text-align:left;
 
 async function analyze(){
 
+let name=document.getElementById("name").value;
 let symptom=document.getElementById("symptom").value;
+let temperature=document.getElementById("temperature").value;
+let duration=document.getElementById("duration").value;
+let pain=document.getElementById("pain").value;
+let vomit=document.getElementById("vomit").value;
 
-let response=await fetch("YOUR_RENDER_URL/analyze",{
-
+let response=await fetch(
+"https://ai-healthcare-assistant-1-nhc1.onrender.com/analyze",
+{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
 },
 
-body:JSON.stringify({symptom:symptom})
-
+body:JSON.stringify({
+name:name,
+symptom:symptom,
+temperature:Number(temperature),
+duration_days:Number(duration),
+pain_level:Number(pain),
+vomiting_count:Number(vomit)
+})
 });
 
 let data=await response.json();
@@ -84,36 +121,47 @@ let resultDiv=document.getElementById("result");
 
 resultDiv.innerHTML="";
 
-data.forEach(entry=>{
+if(data.severity==="emergency"){
+resultDiv.innerHTML+=
+"<div class='emergency'>⚠ EMERGENCY CASE – SEEK MEDICAL HELP IMMEDIATELY</div>";
+}
 
 resultDiv.innerHTML+=
-"<h3>Condition: "+entry.condition+"</h3>"+
-"<p>Severity: "+entry.severity+"</p>";
+"<h3>Severity: "+data.severity+"</h3>"+
+"<p>Triage Score: "+data.triage_score+"</p>";
 
-if(entry.medicines){
+if(data.medicines){
 
-entry.medicines.forEach(m=>{
-resultDiv.innerHTML+="<p>Medicine: "+m.medicine+"</p>";
+resultDiv.innerHTML+="<h3>Recommended Medicines</h3>";
+
+data.medicines.forEach(m=>{
+resultDiv.innerHTML+="<p>"+m+"</p>";
 });
 
 }
 
-if(entry.doctors){
+if(data.doctors){
 
-resultDiv.innerHTML+="<p>Consult Doctors:</p>";
+resultDiv.innerHTML+="<h3>Doctor Suggestions</h3>";
 
-entry.doctors.forEach(d=>{
-resultDiv.innerHTML+="<p>"+d.name+" - "+d.hospital+"</p>";
+data.doctors.forEach(d=>{
+resultDiv.innerHTML+="<p>"+d+"</p>";
 });
 
 }
 
-});
+if(data.patient_profile){
+
+resultDiv.innerHTML+="<h3>Patient Profile</h3>";
+
+resultDiv.innerHTML+="<p>Diseases: "+data.patient_profile.diseases+"</p>";
+resultDiv.innerHTML+="<p>Allergies: "+data.patient_profile.allergies+"</p>";
+
+}
 
 }
 
 </script>
 
 </body>
-
 </html>
