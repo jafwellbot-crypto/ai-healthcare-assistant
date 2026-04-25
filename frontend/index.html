@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -105,13 +106,13 @@ headers:{
 "Content-Type":"application/json"
 },
 
-body: JSON.stringify({
-name:"Rahul",
+body:JSON.stringify({
+name:name,
 symptom:symptom,
-temperature:101,
-duration_days:2,
-pain_level:4,
-vomiting_count:0
+temperature:Number(temperature),
+duration_days:Number(duration),
+pain_level:Number(pain),
+vomiting_count:Number(vomit)
 })
 });
 
@@ -135,7 +136,7 @@ if(data.medicines){
 resultDiv.innerHTML+="<h3>Recommended Medicines</h3>";
 
 data.medicines.forEach(m=>{
-resultDiv.innerHTML+="<p>"+m+"</p>";
+resultDiv.innerHTML+="<p>Medicine: "+m.medicine+"</p>";
 });
 
 }
@@ -145,7 +146,7 @@ if(data.doctors){
 resultDiv.innerHTML+="<h3>Doctor Suggestions</h3>";
 
 data.doctors.forEach(d=>{
-resultDiv.innerHTML+="<p>"+d+"</p>";
+resultDiv.innerHTML+="<p>"+d.name+" - "+d.hospital+"</p>";
 });
 
 }
@@ -165,3 +166,4 @@ resultDiv.innerHTML+="<p>Allergies: "+data.patient_profile.allergies+"</p>";
 
 </body>
 </html>
+```
