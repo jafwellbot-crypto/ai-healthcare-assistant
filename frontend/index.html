@@ -1,5 +1,5 @@
-```html
 <!DOCTYPE html>
+
 <html>
 <head>
 <title>AI Healthcare Assistant</title>
@@ -57,6 +57,7 @@ margin-bottom:10px;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -125,13 +126,11 @@ let resultDiv=document.getElementById("result");
 resultDiv.innerHTML="";
 
 if(data.severity==="emergency"){
-resultDiv.innerHTML+=
-"<div class='emergency'>⚠ EMERGENCY CASE – SEEK MEDICAL HELP IMMEDIATELY</div>";
+resultDiv.innerHTML+="<div class='emergency'>⚠ EMERGENCY CASE – SEEK MEDICAL HELP IMMEDIATELY</div>";
 }
 
-resultDiv.innerHTML+=
-"<h3>Severity: "+data.severity+"</h3>"+
-"<p>Triage Score: "+data.triage_score+"</p>";
+resultDiv.innerHTML+="<h3>Severity: "+data.severity+"</h3>";
+resultDiv.innerHTML+="<p>Triage Score: "+data.triage_score+"</p>";
 
 if(data.medicines){
 
@@ -159,4 +158,3 @@ resultDiv.innerHTML+="<p>"+JSON.stringify(d)+"</p>";
 
 </body>
 </html>
-```
