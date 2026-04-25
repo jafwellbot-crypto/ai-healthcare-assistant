@@ -1,12 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from symptom_engine import SymptomEngine
-from triage_engine import TriageEngine
-from medicine_filter import MedicineFilter
-from doctor_locator import DoctorLocator
-from database import get_patient_profile
-from disease_predictor import DiseasePredictor
+from backend.symptom_engine import SymptomEngine
+from backend.triage_engine import TriageEngine
+from backend.medicine_filter import MedicineFilter
+from backend.doctor_locator import DoctorLocator
+from backend.database import get_patient_profile
+from backend.disease_predictor import DiseasePredictor
 
 app = Flask(__name__)
 CORS(app)
