@@ -1,43 +1,31 @@
-import pandas as pd
-from backend.database import load_medicines
+def get_medicines(self, symptom, patient_profile=None):
 
+    try:
+        filtered = self.medicines[
+            self.medicines["used_for"].str.lower().str.contains(symptom.lower())
+        ]
 
-class MedicineFilter:
+        if patient_profile:
 
-    def __init__(self):
-        self.medicines = load_medicines()
+            allergies = str(patient_profile.get("allergies", "")).lower()
 
-    def get_medicines(self, symptom, patient_profile=None):
+            if allergies != "none":
 
-        try:
-            filtered = self.medicines[
-                self.medicines["used_for"].str.lower() == symptom.lower()
-            ]
+                filtered = filtered[
+                    ~filtered["medicine"].str.lower().str.contains(allergies)
+                ]
 
-            # ----------------------------
-            # ALLERGY FILTER
-            # ----------------------------
-            if patient_profile:
+        medicines_list = []
 
-                allergies = str(patient_profile.get("allergies", "")).lower()
+        for _, row in filtered.iterrows():
+            medicines_list.append({
+                "medicine": row["medicine"],
+                "used_for": row["used_for"],
+                "avoid_for": row["avoid_for"]
+            })
 
-                if allergies != "none":
+        return medicines_list
 
-                    filtered = filtered[
-                        ~filtered["medicine"].str.lower().str.contains(allergies)
-                    ]
-
-            medicines_list = []
-
-            for _, row in filtered.iterrows():
-                medicines_list.append({
-                    "medicine": row["medicine"],
-                    "used_for": row["used_for"],
-                    "avoid_for": row["avoid_for"]
-                })
-
-            return medicines_list
-
-        except Exception as e:
-            print("Medicine filter error:", e)
-            return []
+    except Exception as e:
+        print("Medicine filter error:", e)
+        return []
