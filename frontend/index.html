@@ -107,7 +107,7 @@ resultDiv.innerHTML="Loading... ⏳";
 try {
 
 let response=await fetch(
-"https://ai-healthcare-assistant-1-nhc1.onrender.com/analyze",
+"/analyze",
 {
 method:"POST",
 headers:{
@@ -141,25 +141,41 @@ resultDiv.innerHTML+=`
 <p><b>Triage Score:</b> ${data.triage_score}</p>
 `;
 
-// Medicines (FIXED)
+// MEDICINES
+resultDiv.innerHTML += "<h3>Recommended Medicines</h3>";
+
 if(data.medicines && data.medicines.length > 0){
-resultDiv.innerHTML+="<h3>Recommended Medicines</h3>";
-data.medicines.forEach(m=>{
-resultDiv.innerHTML+=`<span class="pill">💊 ${m}</span>`;
+
+data.medicines.forEach(med=>{
+resultDiv.innerHTML += `
+<span class="pill">
+${med.medicine}
+</span>
+`;
 });
+
+}else{
+
+resultDiv.innerHTML += "<p>No medicines found for this symptom</p>";
+
 }
 
-// Doctors (FIXED KEY)
+// DOCTORS
 if(data.recommended_doctors && data.recommended_doctors.length > 0){
+
 resultDiv.innerHTML+="<h3>Doctor Suggestions</h3>";
+
 data.recommended_doctors.forEach(d=>{
 resultDiv.innerHTML+=`<p>🧑‍⚕️ ${d.name || JSON.stringify(d)}</p>`;
 });
+
 }
 
-} catch(error){
+}catch(error){
+
 console.error(error);
 resultDiv.innerHTML="<p style='color:red'>Backend error or server not reachable</p>";
+
 }
 
 }
