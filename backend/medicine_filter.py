@@ -1,31 +1,60 @@
-def get_medicines(self, symptom, patient_profile=None):
+import pandas as pd
+from backend.database import load_medicines
 
-    try:
-        filtered = self.medicines[
-            self.medicines["used_for"].str.lower().str.contains(symptom.lower())
-        ]
 
-        if patient_profile:
+class MedicineFilter:
 
-            allergies = str(patient_profile.get("allergies", "")).lower()
+    def __init__(self):
+        # Load medicines from CSV
+        self.medicines = load_medicines()
 
-            if allergies != "none":
+        # DEBUG: Check if medicines are loaded
+        print("\n----- MEDICINE DATA LOADED -----")
+        print(self.medicines)
+        print("--------------------------------\n")
 
-                filtered = filtered[
-                    ~filtered["medicine"].str.lower().str.contains(allergies)
-                ]
 
-        medicines_list = []
+    def get_medicines(self, symptom, patient_profile=None):
 
-        for _, row in filtered.iterrows():
-            medicines_list.append({
-                "medicine": row["medicine"],
-                "used_for": row["used_for"],
-                "avoid_for": row["avoid_for"]
-            })
+        try:
+            print("Symptom received:", symptom)
 
-        return medicines_list
+            # Filter medicines based on symptom
+            filtered = self.medicines[
+                self.medicines["used_for"].str.lower().str.contains(symptom.lower())
+            ]
 
-    except Exception as e:
-        print("Medicine filter error:", e)
-        return []
+            # DEBUG: Show filtered medicines
+            print("\nFiltered Medicines:")
+            print(filtered)
+            print("-------------------\n")
+
+            # ----------------------------
+            # ALLERGY FILTER
+            # ----------------------------
+            if patient_profile:
+
+                allergies = str(patient_profile.get("allergies", "")).lower()
+
+                if allergies != "none":
+
+                    filtered = filtered[
+                        ~filtered["medicine"].str.lower().str.contains(allergies)
+                    ]
+
+            medicines_list = []
+
+            for _, row in filtered.iterrows():
+                medicines_list.append({
+                    "medicine": row["medicine"],
+                    "used_for": row["used_for"],
+                    "avoid_for": row["avoid_for"]
+                })
+
+            print("Medicines returned to API:", medicines_list)
+
+            return medicines_list
+
+        except Exception as e:
+            print("Medicine filter error:", e)
+            return []
