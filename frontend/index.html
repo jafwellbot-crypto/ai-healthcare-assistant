@@ -149,7 +149,7 @@ if(data.medicines && data.medicines.length > 0){
 data.medicines.forEach(med=>{
 resultDiv.innerHTML += `
 <span class="pill">
-${med.medicine}
+${typeof med === "string" ? med : med.medicine}
 </span>
 `;
 });

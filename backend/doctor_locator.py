@@ -1,6 +1,10 @@
 import csv
-import os
 
+def load_csv(path):
+    with open(path, newline='', encoding='utf-8') as f:
+        return list(csv.reader(f))
+import csv
+import os
 
 class DoctorLocator:
 
@@ -40,3 +44,4 @@ class DoctorLocator:
                 })
 
         return results
+
