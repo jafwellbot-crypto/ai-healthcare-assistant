@@ -65,6 +65,12 @@ def analyze():
         predicted_disease = disease_predictor.predict(symptom)
 
         # -----------------------
+        # SYMPTOM ANALYSIS (Using SymptomEngine)
+        # -----------------------
+
+        symptom_analysis = symptom_engine.analyze_symptom(symptom)
+
+        # -----------------------
         # TRIAGE SCORING
         # -----------------------
 
@@ -104,6 +110,7 @@ def analyze():
             "patient_profile": patient_profile,
             "symptom": symptom,
             "predicted_disease": predicted_disease,
+            "symptom_analysis": symptom_analysis,
             "triage_score": triage_score,
             "severity": severity,
             "recommendation": "Medicine recommended",

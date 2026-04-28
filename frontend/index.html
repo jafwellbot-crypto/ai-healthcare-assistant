@@ -2,89 +2,805 @@
 <html>
 <head>
 <title>AI Healthcare Assistant</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{
-font-family: Arial;
-background:#f4f6f8;
-text-align:center;
-padding:40px;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.container{
-background:white;
-padding:30px;
-width:400px;
-margin:auto;
-border-radius:10px;
-box-shadow:0px 0px 10px rgba(0,0,0,0.1);
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
 }
 
-input{
-width:80%;
-padding:10px;
-margin-top:10px;
+#gradient-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  filter: blur(1px);
 }
 
-button{
-padding:10px 20px;
-margin-top:15px;
-background:#2a7cff;
-color:white;
-border:none;
-border-radius:5px;
-cursor:pointer;
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.6;
+  z-index: -1;
 }
 
-button:hover{
-background:#1c5ed6;
+.blob-1 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.8), rgba(102, 126, 234, 0));
+  animation: blob-animation-1 20s infinite ease-in-out;
+  top: 10%;
+  left: 10%;
 }
 
-#result{
-margin-top:20px;
-text-align:left;
+.blob-2 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(118, 75, 162, 0.7), rgba(118, 75, 162, 0));
+  animation: blob-animation-2 22s infinite ease-in-out;
+  top: 30%;
+  right: 5%;
 }
 
-.emergency{
-background:red;
-color:white;
-padding:10px;
-border-radius:5px;
-font-weight:bold;
-margin-bottom:10px;
+.blob-3 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(74, 144, 226, 0.7), rgba(74, 144, 226, 0));
+  animation: blob-animation-3 25s infinite ease-in-out;
+  bottom: 10%;
+  left: 20%;
 }
 
-.pill{
-display:inline-block;
-background:#d1ecf1;
-color:#0c5460;
-padding:5px 10px;
-margin:4px;
-border-radius:20px;
-font-size:13px;
+.blob-4 {
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(167, 107, 207, 0.6), rgba(167, 107, 207, 0));
+  animation: blob-animation-4 23s infinite ease-in-out;
+  bottom: 20%;
+  right: 10%;
 }
+
+@keyframes blob-animation-1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.6;
+  }
+  25% {
+    transform: translate(50px, -60px) scale(1.1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate(-40px, 40px) scale(0.95);
+    opacity: 0.5;
+  }
+  75% {
+    transform: translate(60px, 30px) scale(1.05);
+    opacity: 0.65;
+  }
+}
+
+@keyframes blob-animation-2 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.6;
+  }
+  30% {
+    transform: translate(-70px, 50px) scale(1.1);
+    opacity: 0.7;
+  }
+  60% {
+    transform: translate(40px, -60px) scale(0.9);
+    opacity: 0.55;
+  }
+}
+
+@keyframes blob-animation-3 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.5;
+  }
+  35% {
+    transform: translate(80px, -50px) scale(1.15);
+    opacity: 0.65;
+  }
+  70% {
+    transform: translate(-60px, 70px) scale(0.95);
+    opacity: 0.5;
+  }
+}
+
+@keyframes blob-animation-4 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.5;
+  }
+  40% {
+    transform: translate(-90px, 60px) scale(1.1);
+    opacity: 0.65;
+  }
+  80% {
+    transform: translate(50px, -50px) scale(0.9);
+    opacity: 0.45;
+  }
+}
+
+.glow-orb {
+  position: fixed;
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.glow-orb-1 {
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.15), transparent);
+  animation: glow-pulse-1 6s infinite ease-in-out;
+  top: 20%;
+  left: 30%;
+}
+
+.glow-orb-2 {
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(167, 107, 207, 0.12), transparent);
+  animation: glow-pulse-2 7s infinite ease-in-out;
+  bottom: 25%;
+  right: 20%;
+}
+
+@keyframes glow-pulse-1 {
+  0%, 100% {
+    box-shadow: 0 0 40px rgba(102, 126, 234, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 80px rgba(102, 126, 234, 0.7);
+  }
+}
+
+@keyframes glow-pulse-2 {
+  0%, 100% {
+    box-shadow: 0 0 35px rgba(167, 107, 207, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 70px rgba(167, 107, 207, 0.6);
+  }
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+  padding: 40px 20px;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  background: #0f0f1e;
+}
+
+.container {
+  background: rgba(25, 28, 50, 0.75);
+  backdrop-filter: blur(25px);
+  padding: 50px;
+  max-width: 900px;
+  margin: auto;
+  border-radius: 25px;
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.37),
+    inset 0 0 20px rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  position: relative;
+  z-index: 1;
+  animation: slideInUp 0.8s ease;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+h2 {
+  color: #fff;
+  margin-bottom: 15px;
+  font-size: 2.8em;
+  background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+
+.subtitle {
+  color: #b8c5d6;
+  margin-bottom: 35px;
+  font-size: 1.15em;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+.form-section {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.05));
+  padding: 30px;
+  margin: 25px 0;
+  border-radius: 18px;
+  text-align: left;
+  border: 1.5px solid rgba(102, 126, 234, 0.15);
+  backdrop-filter: blur(10px);
+  animation: slideInUp 0.8s ease 0.1s backwards;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.form-section h3 {
+  color: #e8ecf5;
+  margin-bottom: 20px;
+  font-size: 1.35em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(102, 126, 234, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.checkbox-item:hover {
+  border-color: rgba(102, 126, 234, 0.5);
+  background: rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.2);
+}
+
+.checkbox-item input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  margin-right: 12px;
+  accent-color: #667eea;
+  filter: drop-shadow(0 0 2px rgba(102, 126, 234, 0.5));
+}
+
+.checkbox-item label {
+  cursor: pointer;
+  flex: 1;
+  color: #b8c5d6;
+  font-weight: 500;
+  font-size: 1.02em;
+}
+
+.checkbox-item input[type="checkbox"]:checked + label {
+  color: #fff;
+  font-weight: 600;
+}
+
+.additional-input {
+  width: 100%;
+  padding: 14px;
+  margin-top: 12px;
+  border: 2px solid rgba(102, 126, 234, 0.15);
+  border-radius: 12px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.05);
+  color: #e8ecf5;
+  backdrop-filter: blur(10px);
+}
+
+.additional-input::placeholder {
+  color: #7a8ba8;
+}
+
+.additional-input:focus {
+  outline: none;
+  border-color: rgba(102, 126, 234, 0.5);
+  background: rgba(102, 126, 234, 0.08);
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
+.numeric-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.numeric-input {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.numeric-input label {
+  color: #b8c5d6;
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: 0.98em;
+  letter-spacing: 0.3px;
+}
+
+.numeric-input input,
+.numeric-input select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid rgba(102, 126, 234, 0.15);
+  border-radius: 12px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.05);
+  color: #e8ecf5;
+  backdrop-filter: blur(10px);
+}
+
+.numeric-input input::placeholder,
+.numeric-input select::placeholder {
+  color: #7a8ba8;
+}
+
+.numeric-input input:focus,
+.numeric-input select:focus {
+  outline: none;
+  border-color: rgba(102, 126, 234, 0.5);
+  background: rgba(102, 126, 234, 0.08);
+  box-shadow: 0 0 18px rgba(102, 126, 234, 0.25);
+}
+
+.numeric-input select option {
+  background: #191c32;
+  color: #e8ecf5;
+}
+
+button {
+  padding: 16px 48px;
+  margin-top: 30px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.05em;
+  transition: all 0.4s ease;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+}
+
+button:hover::before {
+  left: 100%;
+}
+
+button:active {
+  transform: translateY(-2px);
+}
+
+#result {
+  margin-top: 30px;
+  text-align: left;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.emergency {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(238, 90, 111, 0.15));
+  color: #ff9999;
+  padding: 20px;
+  border-radius: 14px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.2);
+  font-size: 1.15em;
+  animation: slideIn 0.6s ease;
+  border: 2px solid rgba(255, 107, 107, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.medicine-pill {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(78, 205, 196, 0.15), rgba(52, 152, 219, 0.1));
+  color: #7cdfe3;
+  padding: 12px 18px;
+  margin: 10px 7px;
+  border-radius: 28px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(78, 205, 196, 0.15);
+  transition: all 0.3s ease;
+  cursor: help;
+  border: 2px solid rgba(78, 205, 196, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.medicine-pill:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(78, 205, 196, 0.3);
+  background: linear-gradient(135deg, rgba(78, 205, 196, 0.25), rgba(52, 152, 219, 0.15));
+  border-color: rgba(78, 205, 196, 0.6);
+}
+
+.doctor-card {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.08));
+  border-left: 5px solid #667eea;
+  padding: 20px;
+  margin: 18px 0;
+  border-radius: 15px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  animation: slideIn 0.6s ease;
+  border: 1px solid rgba(102, 126, 234, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+.doctor-card:hover {
+  transform: translateX(8px);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.12));
+}
+
+.doctor-name {
+  font-weight: 700;
+  color: #e8ecf5;
+  font-size: 1.15em;
+  margin-bottom: 10px;
+}
+
+.doctor-spec {
+  color: #8fa3d1;
+  font-weight: 600;
+  font-size: 0.98em;
+  margin-bottom: 8px;
+}
+
+.doctor-hospital {
+  color: #b8c5d6;
+  font-size: 0.95em;
+  margin-top: 10px;
+}
+
+.profile-card {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.08));
+  padding: 20px;
+  border-radius: 15px;
+  border-left: 5px solid #667eea;
+  margin: 18px 0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.6s ease;
+  border: 1px solid rgba(102, 126, 234, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+.profile-card p {
+  color: #b8c5d6;
+  margin: 12px 0;
+  font-size: 0.98em;
+  line-height: 1.8;
+}
+
+.allergy-warning {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.12), rgba(255, 165, 0, 0.1));
+  color: #ff9999;
+  padding: 16px;
+  border-radius: 12px;
+  margin-top: 14px;
+  border-left: 5px solid #ff6b6b;
+  font-weight: 600;
+  animation: slideIn 0.6s ease;
+  border: 1px solid rgba(255, 107, 107, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.condition-card {
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(78, 205, 196, 0.08));
+  padding: 16px;
+  margin: 14px 0;
+  border-radius: 12px;
+  border-left: 5px solid #3498db;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  animation: slideIn 0.6s ease;
+  border: 1px solid rgba(52, 152, 219, 0.15);
+  backdrop-filter: blur(10px);
+  color: #b8c5d6;
+}
+
+.condition-card:hover {
+  transform: translateX(6px);
+  box-shadow: 0 8px 18px rgba(52, 152, 219, 0.2);
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(78, 205, 196, 0.12));
+}
+
+.condition-severity {
+  display: inline-block;
+  background: rgba(52, 152, 219, 0.2);
+  color: #7cdfe3;
+  padding: 6px 14px;
+  border-radius: 22px;
+  font-size: 0.85em;
+  font-weight: 700;
+  border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+h3 {
+  color: #e8ecf5;
+  margin-top: 25px;
+  margin-bottom: 18px;
+  font-size: 1.3em;
+  border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+  padding-bottom: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.severity-label {
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-weight: 700;
+  margin: 14px 0;
+  font-size: 1.12em;
+  letter-spacing: 0.5px;
+}
+
+.severity-low {
+  background: rgba(76, 175, 80, 0.2);
+  color: #81c784;
+  border: 2px solid rgba(76, 175, 80, 0.3);
+}
+
+.severity-medium {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffb74d;
+  border: 2px solid rgba(255, 193, 7, 0.3);
+}
+
+.severity-high {
+  background: rgba(244, 67, 54, 0.15);
+  color: #ef9a9a;
+  border: 2px solid rgba(244, 67, 54, 0.3);
+}
+
+.triage-score {
+  font-size: 1.25em;
+  color: #b8c5d6;
+  margin: 20px 0;
+  padding: 18px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.05));
+  border-radius: 12px;
+  border-left: 5px solid #667eea;
+  font-weight: 600;
+  border: 1px solid rgba(102, 126, 234, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+.no-doctors {
+  color: #7a8ba8;
+  font-style: italic;
+  margin: 14px 0;
+  padding: 12px;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 10px;
+  border-left: 4px solid #667eea;
+}
+
+.loading {
+  text-align: center;
+  color: #8fa3d1;
+  font-weight: 600;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
 </style>
 
 </head>
 
 <body>
 
+<div id="background-container">
+  <canvas id="gradient-canvas"></canvas>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+</div>
+
 <div class="container">
 
-<h2>AI Healthcare Assistant</h2>
+<h2>🏥 AI Healthcare Assistant</h2>
+<p class="subtitle">Smart Symptom Analysis & Doctor Locator</p>
 
-<p>Enter Patient Details</p>
+<!-- PATIENT NAME SECTION -->
+<div class="form-section">
+  <h3>👤 Patient Information</h3>
+  <div class="numeric-group">
+    <div class="numeric-input">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" placeholder="Enter patient name">
+    </div>
+    <div class="numeric-input">
+      <label for="age">Age</label>
+      <input type="number" id="age" placeholder="Age" min="0" max="120">
+    </div>
+    <div class="numeric-input">
+      <label for="gender">Gender</label>
+      <select id="gender" style="width: 100%; padding: 12px; border: 2px solid rgba(102, 126, 234, 0.15); border-radius: 12px; cursor: pointer; background: rgba(255, 255, 255, 0.05); color: #e8ecf5; backdrop-filter: blur(10px);">
+        <option value="">Select Gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+  </div>
+</div>
 
-<input id="name" placeholder="Patient Name">
-<input id="symptom" placeholder="Symptom (example: fever)">
-<input id="temperature" type="number" placeholder="Temperature">
-<input id="duration" type="number" placeholder="Duration (days)">
-<input id="pain" type="number" placeholder="Pain Level (0-10)">
-<input id="vomit" type="number" placeholder="Vomiting Count">
+<!-- SYMPTOMS SECTION -->
+<div class="form-section">
+  <h3>🤒 Select Symptoms</h3>
+  <div class="checkbox-group">
+    <div class="checkbox-item">
+      <input type="checkbox" id="symptom-fever" value="fever">
+      <label for="symptom-fever">Fever</label>
+    </div>
+    <div class="checkbox-item">
+      <input type="checkbox" id="symptom-vomiting" value="vomiting">
+      <label for="symptom-vomiting">Vomiting</label>
+    </div>
+    <div class="checkbox-item">
+      <input type="checkbox" id="symptom-neck-pain" value="neck pain">
+      <label for="symptom-neck-pain">Neck Pain</label>
+    </div>
+    <div class="checkbox-item">
+      <input type="checkbox" id="symptom-back-pain" value="back pain">
+      <label for="symptom-back-pain">Back Pain</label>
+    </div>
+    <div class="checkbox-item">
+      <input type="checkbox" id="symptom-headache" value="headache">
+      <label for="symptom-headache">Headache</label>
+    </div>
+    <div class="checkbox-item">
+      <input type="checkbox" id="symptom-cough" value="cough">
+      <label for="symptom-cough">Cough</label>
+    </div>
+  </div>
+  <p style="color: #4a5568; font-size: 0.9em; margin-bottom: 10px;">Or add custom symptom:</p>
+  <input type="text" id="symptom-custom" class="additional-input" placeholder="Add additional symptom (optional)">
+</div>
 
-<br>
+<!-- EXISTING DISEASES SECTION -->
+<div class="form-section">
+  <h3>🏥 Existing Diseases (If Any)</h3>
+  <div class="checkbox-group">
+    <div class="checkbox-item">
+      <input type="checkbox" id="disease-diabetes" value="diabetes">
+      <label for="disease-diabetes">Diabetes</label>
+    </div>
+    <div class="checkbox-item">
+      <input type="checkbox" id="disease-hypertension" value="hypertension">
+      <label for="disease-hypertension">Hypertension</label>
+    </div>
+    <div class="checkbox-item">
+      <input type="checkbox" id="disease-asthma" value="asthma">
+      <label for="disease-asthma">Asthma</label>
+    </div>
+    <div class="checkbox-item">
+      <input type="checkbox" id="disease-heart" value="heart disease">
+      <label for="disease-heart">Heart Disease</label>
+    </div>
+    <div class="checkbox-item">
+      <input type="checkbox" id="disease-thyroid" value="thyroid">
+      <label for="disease-thyroid">Thyroid</label>
+    </div>
+  </div>
+  <p style="color: #4a5568; font-size: 0.9em; margin-bottom: 10px;">Or add custom disease:</p>
+  <input type="text" id="disease-custom" class="additional-input" placeholder="Add other disease (optional)">
+</div>
 
-<button onclick="analyze()">Analyze</button>
+<!-- VITAL SIGNS SECTION -->
+<div class="form-section">
+  <h3>🌡️ Vital Signs</h3>
+  <div class="numeric-group">
+    <div class="numeric-input">
+      <label for="temperature">Temperature (°F)</label>
+      <input type="number" id="temperature" placeholder="98.6" min="90" max="110" step="0.1">
+    </div>
+    <div class="numeric-input">
+      <label for="duration">Duration (days)</label>
+      <input type="number" id="duration" placeholder="1" min="1" max="365">
+    </div>
+    <div class="numeric-input">
+      <label for="pain">Pain Level (0-10)</label>
+      <input type="number" id="pain" placeholder="5" min="0" max="10">
+    </div>
+    <div class="numeric-input">
+      <label for="vomit">Vomiting Count</label>
+      <input type="number" id="vomit" placeholder="0" min="0">
+    </div>
+  </div>
+</div>
+
+<center>
+  <button onclick="analyze()">🔍 Analyze & Find Doctors</button>
+</center>
 
 <div id="result"></div>
 
@@ -92,91 +808,232 @@ font-size:13px;
 
 <script>
 
+// ========================
+// SMOOTH GRADIENT BACKGROUND
+// ========================
+
+const canvas = document.getElementById('gradient-canvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let mouseX = canvas.width / 2;
+let mouseY = canvas.height / 2;
+let smoothX = canvas.width / 2;
+let smoothY = canvas.height / 2;
+
+document.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+function drawSmoothGradient() {
+  // Smooth interpolation for better animation
+  smoothX += (mouseX - smoothX) * 0.15;
+  smoothY += (mouseY - smoothY) * 0.15;
+  
+  // Create multiple layered gradients
+  const gradient1 = ctx.createRadialGradient(smoothX, smoothY, 0, smoothX, smoothY, 600);
+  const hue = ((smoothX + smoothY) / (canvas.width + canvas.height)) * 360;
+  
+  gradient1.addColorStop(0, `hsla(${hue}, 100%, 60%, 0.3)`);
+  gradient1.addColorStop(0.4, `hsla(${(hue + 40) % 360}, 85%, 50%, 0.15)`);
+  gradient1.addColorStop(1, `hsla(${(hue + 120) % 360}, 70%, 40%, 0)`);
+  
+  ctx.fillStyle = gradient1;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Secondary gradient for depth
+  const gradient2 = ctx.createRadialGradient(canvas.width - smoothX, canvas.height - smoothY, 0, canvas.width - smoothX, canvas.height - smoothY, 500);
+  gradient2.addColorStop(0, `hsla(${(hue + 200) % 360}, 90%, 50%, 0.2)`);
+  gradient2.addColorStop(1, `hsla(${(hue + 280) % 360}, 60%, 30%, 0)`);
+  
+  ctx.fillStyle = gradient2;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function animate() {
+  // Subtle background base
+  ctx.fillStyle = '#0f0f1e';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  drawSmoothGradient();
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+// ========================
+// FORM HANDLING
+// ========================
+
 async function analyze(){
 
-let name=document.getElementById("name").value;
-let symptom=document.getElementById("symptom").value;
-let temperature=document.getElementById("temperature").value;
-let duration=document.getElementById("duration").value;
-let pain=document.getElementById("pain").value;
-let vomit=document.getElementById("vomit").value;
+  // Get patient info
+  let name = document.getElementById("name").value;
+  let age = document.getElementById("age").value;
+  let gender = document.getElementById("gender").value;
 
-let resultDiv=document.getElementById("result");
-resultDiv.innerHTML="Loading... ⏳";
+  // Get checked symptoms
+  let symptoms = [];
+  document.querySelectorAll('input[id^="symptom-"][type="checkbox"]:checked').forEach(cb => {
+    symptoms.push(cb.value);
+  });
 
-try {
+  let customSymptom = document.getElementById("symptom-custom").value.trim();
+  if(customSymptom) symptoms.push(customSymptom);
 
-let response = await fetch(
-"http://127.0.0.1:5000/analyze",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-name:name,
-symptom:symptom,
-temperature:Number(temperature),
-duration_days:Number(duration),
-pain_level:Number(pain),
-vomiting_count:Number(vomit)
-})
-});
+  // Get checked diseases
+  let diseases = [];
+  document.querySelectorAll('input[id^="disease-"][type="checkbox"]:checked').forEach(cb => {
+    diseases.push(cb.value);
+  });
 
-let data=await response.json();
+  let customDisease = document.getElementById("disease-custom").value.trim();
+  if(customDisease) diseases.push(customDisease);
 
-console.log("FULL API RESPONSE:", data);
+  // Get vital signs
+  let temperature = document.getElementById("temperature").value || 98.6;
+  let duration = document.getElementById("duration").value || 1;
+  let pain = document.getElementById("pain").value || 0;
+  let vomit = document.getElementById("vomit").value || 0;
 
-resultDiv.innerHTML="";
+  // Validation
+  if(!name) {
+    alert("Please enter patient name");
+    return;
+  }
 
-// Emergency
-if(data.severity==="emergency"){
-resultDiv.innerHTML+=
-"<div class='emergency'>⚠ EMERGENCY CASE – SEEK MEDICAL HELP IMMEDIATELY</div>";
-}
+  if(symptoms.length === 0) {
+    alert("Please select at least one symptom");
+    return;
+  }
 
-// Severity + Score
-resultDiv.innerHTML+=`
-<h3>Severity: ${data.severity}</h3>
-<p><b>Triage Score:</b> ${data.triage_score}</p>
-`;
+  let resultDiv = document.getElementById("result");
+  resultDiv.innerHTML = '<p class="loading">⏳ Loading analysis and locating nearby doctors...</p>';
 
-// MEDICINES
-resultDiv.innerHTML += "<h3>Recommended Medicines</h3>";
+  try {
 
-if(data.medicines && data.medicines.length > 0){
+    // If multiple symptoms selected, use primary (first one)
+    let primarySymptom = symptoms[0];
 
-data.medicines.forEach(med=>{
-resultDiv.innerHTML += `
-<span class="pill">
-${typeof med === "string" ? med : med.medicine}
-</span>
-`;
-});
+    let response = await fetch(
+      "http://127.0.0.1:5000/analyze",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: name,
+          symptom: primarySymptom,
+          temperature: Number(temperature),
+          duration_days: Number(duration),
+          pain_level: Number(pain),
+          vomiting_count: Number(vomit)
+        })
+      }
+    );
 
-}else{
+    let data = await response.json();
 
-resultDiv.innerHTML += "<p>No medicines found for this symptom</p>";
+    console.log("FULL API RESPONSE:", data);
 
-}
+    resultDiv.innerHTML = "";
 
-// DOCTORS
-if(data.recommended_doctors && data.recommended_doctors.length > 0){
+    // Emergency Alert
+    if(data.severity === "emergency"){
+      resultDiv.innerHTML += "<div class='emergency'>⚠️ EMERGENCY CASE – SEEK MEDICAL HELP IMMEDIATELY</div>";
+    }
 
-resultDiv.innerHTML+="<h3>Doctor Suggestions</h3>";
+    // PATIENT PROFILE DISPLAY
+    resultDiv.innerHTML += "<h3>👤 Patient Summary</h3>";
+    resultDiv.innerHTML += `<p><strong>Name:</strong> ${name} | <strong>Age:</strong> ${age || 'N/A'} | <strong>Gender:</strong> ${gender || 'N/A'}</p>`;
+    resultDiv.innerHTML += `<p><strong>Selected Symptoms:</strong> ${symptoms.join(', ')}</p>`;
+    if(diseases.length > 0) {
+      resultDiv.innerHTML += `<p><strong>Existing Conditions:</strong> ${diseases.join(', ')}</p>`;
+    }
 
-data.recommended_doctors.forEach(d=>{
-resultDiv.innerHTML+=`<p>🧑‍⚕️ ${d.name || JSON.stringify(d)}</p>`;
-});
+    // Severity Level with Color Coding
+    let severityClass = "severity-medium";
+    if(data.severity === "low") severityClass = "severity-low";
+    else if(data.severity === "high" || data.severity === "emergency") severityClass = "severity-high";
 
-}
+    resultDiv.innerHTML += `
+      <h3>📊 Medical Analysis</h3>
+      <div class="severity-label ${severityClass}">
+        Severity: ${data.severity.toUpperCase()}
+      </div>
+      <div class="triage-score">
+        <strong>Triage Score:</strong> ${data.triage_score} / 100
+      </div>
+    `;
 
-}catch(error){
+    // Predicted Disease
+    if(data.predicted_disease && data.predicted_disease !== "Unknown"){
+      resultDiv.innerHTML += `<p><strong>🔍 AI Predicted Condition:</strong> ${data.predicted_disease}</p>`;
+    }
 
-console.error(error);
-resultDiv.innerHTML="<p style='color:red'>Backend error or server not reachable</p>";
+    // SYMPTOM ANALYSIS from CSV
+    if(data.symptom_analysis && data.symptom_analysis.length > 0){
+      resultDiv.innerHTML += "<h3>📋 Possible Medical Conditions</h3>";
+      data.symptom_analysis.forEach((analysis, idx) => {
+        resultDiv.innerHTML += `
+          <div class="condition-card">
+            <strong>${idx + 1}. ${analysis.condition}</strong>
+            <span class="condition-severity">${analysis.severity}</span>
+          </div>
+        `;
+      });
+    }
 
-}
+    // MEDICINES SECTION
+    resultDiv.innerHTML += "<h3>💊 Recommended Medicines</h3>";
+
+    if(data.medicines && data.medicines.length > 0){
+      data.medicines.forEach(med => {
+        let medicineDisplay = typeof med === "string" ? med : med.medicine;
+        let avoidInfo = (med.avoid_for && med.avoid_for !== 'none') ? ` (Avoid if: ${med.avoid_for})` : '';
+
+        resultDiv.innerHTML += `
+          <div class="medicine-pill" title="${avoidInfo}">
+            ${medicineDisplay}${avoidInfo ? '<span style="font-size: 11px; display: block; margin-top: 3px; color: #d63031;">' + avoidInfo + '</span>' : ''}
+          </div>
+        `;
+      });
+    } else {
+      resultDiv.innerHTML += "<p class='no-doctors'>No specific medicines recommended for this symptom</p>";
+    }
+
+    // DOCTORS SECTION
+    resultDiv.innerHTML += "<div style='margin-top: 20px; padding-top: 15px; border-top: 2px solid #e2e8f0;'><h3>🧑‍⚕️ Nearby Doctors Available</h3>";
+
+    if(data.recommended_doctors && data.recommended_doctors.length > 0){
+      data.recommended_doctors.forEach(d => {
+        resultDiv.innerHTML += `
+          <div class="doctor-card">
+            <div class="doctor-name">👨‍⚕️ ${d.name || 'Doctor'}</div>
+            <div class="doctor-spec">🏷️ Specialization: ${d.specialization || 'General'}</div>
+            <div class="doctor-hospital">🏥 Hospital: ${d.hospital || 'Hospital'}</div>
+          </div>
+        `;
+      });
+    } else {
+      resultDiv.innerHTML += "<p class='no-doctors'>✓ No doctors needed for current symptom. Please visit a general physician if needed.</p>";
+    }
+
+    resultDiv.innerHTML += "</div>";
+
+  } catch(error) {
+    console.error(error);
+    resultDiv.innerHTML = "<p style='color:red'>❌ Backend error or server not reachable. Make sure the Flask server is running on http://127.0.0.1:5000</p>";
+  }
 
 }
 

@@ -1,6 +1,6 @@
-used_for,medicine
-fever,Paracetamol
-cold,Antihistamine
-headache,Ibuprofen
-vomiting,Ondansetron
-infection,Azithromycin
+used_for,medicine,avoid_for
+fever,Paracetamol,liver disease
+cold,Antihistamine,hypertension
+headache,Ibuprofen,kidney disease
+vomiting,Ondansetron,pregnancy
+infection,Azithromycin,liver disease
